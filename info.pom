@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>overpass-utils</name>
+  <description>Utilities for working with the Overpass API.</description>
+  <url>https://github.com/topobyte/overpass-utils</url>
+</project>
