@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
 import de.topobyte.adt.geo.BBox;
@@ -79,12 +80,13 @@ public class OverpassUtil
 	private static String polystring(Polygon polygon)
 	{
 		StringBuilder strb = new StringBuilder();
-		Coordinate[] coords = polygon.getCoordinates();
-		strb.append(String.format("%.6f %.6f", coords[0].y, coords[0].x));
-		for (int i = 1; i < coords.length - 1; i++) {
-			Coordinate coord = coords[i];
+		LinearRing exterior = (LinearRing) polygon.getExteriorRing();
+		Coordinate c0 = exterior.getCoordinateN(0);
+		strb.append(String.format("%.6f %.6f", c0.y, c0.x));
+		for (int i = 1; i < exterior.getNumPoints() - 1; i++) {
+			Coordinate c = exterior.getCoordinateN(i);
 			strb.append(" ");
-			strb.append(String.format("%.6f %.6f", coord.y, coord.x));
+			strb.append(String.format("%.6f %.6f", c.y, c.x));
 		}
 		return strb.toString();
 	}
