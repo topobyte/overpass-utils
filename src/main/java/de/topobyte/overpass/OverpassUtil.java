@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,17 +37,28 @@ public class OverpassUtil
 
 	final static Logger logger = LoggerFactory.getLogger(OverpassUtil.class);
 
-	private static final String ENDPOINT = "http://overpass-api.de/api/interpreter";
+	private static final String SCHEME = "http";
+	private static final String ENDPOINT = "overpass-api.de/api/interpreter";
+
+	private static URIBuilder builder()
+	{
+		URIBuilder uriBuilder = new URIBuilder();
+		uriBuilder.setScheme(SCHEME);
+		uriBuilder.setHost(ENDPOINT);
+		return uriBuilder;
+	}
 
 	/**
 	 * Retrieves the query to the Overpass API for the specified bounding box.
 	 */
 	public static String query(BBox box)
 	{
-		String queryTemplate = "%s?data=(node(%f,%f,%f,%f);<;>;);out;";
-		String query = String.format(queryTemplate, ENDPOINT, box.getLat2(),
-				box.getLon1(), box.getLat1(), box.getLon2());
-		return query;
+		URIBuilder uriBuilder = builder();
+		String dataTemplate = "(node(%f,%f,%f,%f);<;>;);out;";
+		String data = String.format(dataTemplate, box.getLat2(), box.getLon1(),
+				box.getLat1(), box.getLon2());
+		uriBuilder.addParameter("data", data);
+		return uriBuilder.toString();
 	}
 
 	/**
