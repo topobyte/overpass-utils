@@ -30,6 +30,9 @@ import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Polygon;
+
 import de.topobyte.adt.geo.BBox;
 
 public class OverpassUtil
@@ -59,6 +62,31 @@ public class OverpassUtil
 				box.getLat1(), box.getLon2());
 		uriBuilder.addParameter("data", data);
 		return uriBuilder.toString();
+	}
+
+	/**
+	 * Retrieves the query to the Overpass API for the specified polygon.
+	 */
+	public static String query(Polygon polygon)
+	{
+		URIBuilder uriBuilder = builder();
+		String dataTemplate = "(node(poly:\"%s\");<;>;);out;";
+		String data = String.format(dataTemplate, polystring(polygon));
+		uriBuilder.addParameter("data", data);
+		return uriBuilder.toString();
+	}
+
+	private static String polystring(Polygon polygon)
+	{
+		StringBuilder strb = new StringBuilder();
+		Coordinate[] coords = polygon.getCoordinates();
+		strb.append(String.format("%.6f %.6f", coords[0].y, coords[0].x));
+		for (int i = 1; i < coords.length - 1; i++) {
+			Coordinate coord = coords[i];
+			strb.append(" ");
+			strb.append(String.format("%.6f %.6f", coord.y, coord.x));
+		}
+		return strb.toString();
 	}
 
 	/**
