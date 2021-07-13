@@ -52,6 +52,16 @@ public class OverpassUtil
 	}
 
 	/**
+	 * Retrieves the query to the Overpass API for the specified raw query.
+	 */
+	public static String query(String rawQuery)
+	{
+		URIBuilder uriBuilder = builder();
+		uriBuilder.addParameter("data", rawQuery);
+		return uriBuilder.toString();
+	}
+
+	/**
 	 * Retrieves the query to the Overpass API for the specified bounding box.
 	 */
 	public static String query(BBox box)
